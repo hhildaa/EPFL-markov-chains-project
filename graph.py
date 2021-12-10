@@ -86,7 +86,7 @@ def check_edges(x_star: np.array, adj_list: np.array) -> None:
 
 
 def assess_estimation_quality(x_hat: np.array, x_star: np.array) -> int:
-    q_n = 1 / x_star.shape[0] * (np.sum(x_hat * x_star))  # np.abs
+    q_n = 1 / x_star.shape[0] * np.abs(np.sum(x_hat * x_star))  # np.abs
     return q_n
 
 
