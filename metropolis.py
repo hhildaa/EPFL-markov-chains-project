@@ -1,6 +1,7 @@
 import numpy as np
 
 # Baseline algorithm - simple random walk
+from graph import assess_estimation_quality
 
 
 def change_one_elem(state, ind):
@@ -47,12 +48,12 @@ def f_dummy(adj: np.array, state: np.array, ind: int):
     #    return -red_num
 
 
-def baseline(start, adj, beta, it_num=100):
-    # initialize start state
+def baseline(start, adj, beta, x_star, it_num=100):
     state = start
     l = len(start)
     acceptance_rate_list = []
     epsilon = 0.0001
+    estimation_overlaps = []
     for i in range(it_num):
         # choose a random person
         chosen_person = np.random.randint(l)
@@ -74,5 +75,8 @@ def baseline(start, adj, beta, it_num=100):
         else:
             acceptance_rate_list.append(0)
 
+        # Current overlap
+        estimation_overlaps.append(assess_estimation_quality(state, x_star))
+
     # visualize_graph(adj, state)
-    return state, acceptance_rate_list
+    return state, acceptance_rate_list, estimation_overlaps

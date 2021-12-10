@@ -85,8 +85,8 @@ def check_edges(x_star: np.array, adj_list: np.array) -> None:
         f"a/N prob: {a_prob * 100:.1f}% and a ~ {int(n * a_prob)} \nb/N prob: {b_prob * 100:.1f}% and b ~ {int(n * b_prob)}")
 
 
-def assess_estimation_quality(n: int, x_hat: np.array, x_star: np.array) -> int:
-    q_n = 1 / n * np.abs(np.sum(x_hat * x_star))
+def assess_estimation_quality(x_hat: np.array, x_star: np.array) -> int:
+    q_n = 1 / x_star.shape[0] * (np.sum(x_hat * x_star))  # np.abs
     return q_n
 
 
@@ -94,7 +94,7 @@ def check_random_estimates(a: int, b: int, n: int, x_star: np.array, verbose=Fal
     random_estimation = []
     for i in range(10, 110):
         x_hat = generate_x(n, i)
-        random_estimation.append(assess_estimation_quality(n, x_hat, x_star))
+        random_estimation.append(assess_estimation_quality(x_hat, x_star))
     if verbose:
         print(f"For a = {a}, b = {b}, N = {n} and random estimation "
               f"we get a score: {np.mean(random_estimation) * 100:.2f}%")

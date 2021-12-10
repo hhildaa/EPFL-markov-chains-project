@@ -35,3 +35,18 @@ def plot_acceptance_rates(acceptances_lists):
         plt.ylabel("Proportion of accepted moves")
         plt.legend(["total proposals", "accepted proposals"], loc='best')
         plt.show()
+
+
+def plot_estimation_overlaps_over_iterations(estimation_overlaps):
+    # For better seeing the development of the plot,
+    # Visualise only every tenth iteration
+    estimation_overlaps_pruned = []
+    for i in range(len(estimation_overlaps)):
+        if i % 100 == 0:
+            estimation_overlaps_pruned.append(estimation_overlaps[i])
+    plt.figure()
+    plt.plot(estimation_overlaps_pruned)
+    plt.xlabel("Iterations")
+    plt.ylabel("Estimation overlap")
+    plt.title("Estimation overlap over iterations")
+    plt.show()
