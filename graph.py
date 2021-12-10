@@ -1,8 +1,5 @@
-from numpy.random import default_rng
 import numpy as np
-from typing import Tuple
-import networkx as nx
-from tqdm import tqdm
+from numpy.random import default_rng
 
 
 def check_a_b_relation(a: int, b: int) -> None:
@@ -91,14 +88,6 @@ def check_edges(x_star: np.array, adj_list: np.array) -> None:
 def assess_estimation_quality(n: int, x_hat: np.array, x_star: np.array) -> int:
     q_n = 1 / n * np.abs(np.sum(x_hat * x_star))
     return q_n
-
-
-def visualize_graph(adj, color, n):
-    # A: Fixed bug where you were using edges variable but should have been using adj
-
-    G = nx.Graph(adj - np.eye(n))  # had edges variable here
-    color_map = np.where(color == 1, 'blue', 'red')
-    nx.draw(G, node_size=50, node_color=color_map)
 
 
 def check_random_estimates(a: int, b: int, n: int, x_star: np.array, verbose=False):

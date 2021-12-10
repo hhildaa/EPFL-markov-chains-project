@@ -1,6 +1,7 @@
 from graph import *
 from metropolis import *
-from plots import plot_acceptance_rates
+from plots import plot_acceptance_rates, visualize_graph
+
 
 if __name__ == '__main__':
     a = 15

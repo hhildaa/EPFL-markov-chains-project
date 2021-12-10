@@ -1,9 +1,18 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import networkx as nx
+
+
+def visualize_graph(adj, color, n):
+    # A: Fixed bug where you were using edges variable but should have been using adj
+
+    G = nx.Graph(adj - np.eye(n))  # had edges variable here
+    color_map = np.where(color == 1, 'blue', 'red')
+    nx.draw(G, node_size=50, node_color=color_map)
 
 
 def aggregate_acceptance_rates(acceptances_list):
-    aggregates = np.array_split(np.array(acceptances_list), 10)
+    aggregates = np.array_split(np.array(acceptances_list), 30)
     total_iteration = [x.shape[0] for x in aggregates]
     aggregates = [np.sum(x) for x in aggregates]
     return aggregates, total_iteration
@@ -26,10 +35,3 @@ def plot_acceptance_rates(acceptances_lists):
         plt.ylabel("Proportion of accepted moves")
         plt.legend(["total proposals", "accepted proposals"], loc='best')
         plt.show()
-
-
-if __name__ == '__main__':
-    acceptances_lists = []
-    for i in range(1):
-        acceptances_lists.append(np.random.randint(2, size=10000).tolist())
-    plot_acceptance_rates(acceptances_lists)

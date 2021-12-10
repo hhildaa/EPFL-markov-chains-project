@@ -52,6 +52,7 @@ def baseline(start, adj, beta, it_num=100):
     state = start
     l = len(start)
     acceptance_rate_list = []
+    epsilon = 0.0001
     for i in range(it_num):
         # choose a random person
         chosen_person = np.random.randint(l)
@@ -64,7 +65,7 @@ def baseline(start, adj, beta, it_num=100):
 
         x = f_dummy(adj, new_state, chosen_person)
         y = f_dummy(adj, state, chosen_person)
-        accept_rate = f_dummy(adj, new_state, chosen_person) / f_dummy(adj, state, chosen_person)
+        accept_rate = f_dummy(adj, new_state, chosen_person) / (f_dummy(adj, state, chosen_person) +  epsilon)
         random = np.random.rand(1)
 
         if random <= accept_rate:
