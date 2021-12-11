@@ -8,6 +8,7 @@ if __name__ == '__main__':
     b = 10
     N = a+b
     it_num = 100
+    beta = 1
 
     check_a_b_relation(a, b)
 
@@ -23,16 +24,17 @@ if __name__ == '__main__':
 
     for i in range(sim_num):
         # starting position: random assignment of clusters
-        start = np.random.randint(2, size=N)
-        start = np.array(np.where(start == 1, -1, 1))
+        x_hat_1 = generate_x_hat(N)
+        x_hat_2 = generate_x_hat(N)
 
-        final_state, acceptance_rate_list, estimation_overlap = \
-            baseline(start, adj_matrix, a, b, N, 1, x_star, it_num=it_num)
+        final_state = \
+            houdayer(x_hat_1, x_hat_2, adj_matrix, a, b, N, beta, x_star, it_num=it_num)
 
-        acceptances_over_runs.append(acceptance_rate_list)
-        estimation_overlap_over_runs.append(estimation_overlap)
+        #acceptances_over_runs.append(acceptance_rate_list)
+        #estimation_overlap_over_runs.append(estimation_overlap)
+        #estimation_overlap[-1]
 
-        print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round(estimation_overlap[-1] * 100, 2)}%')
+        print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round( 100, 2)}%')
 
     plot_estimation_overlaps_over_iterations(estimation_overlap_over_runs)
     # plot_acceptance_rates(acceptances_over_runs)

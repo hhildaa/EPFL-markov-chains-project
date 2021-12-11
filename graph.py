@@ -99,3 +99,9 @@ def check_random_estimates(a: int, b: int, n: int, x_star: np.array, verbose=Fal
         print(f"For a = {a}, b = {b}, N = {n} and random estimation "
               f"we get a score: {np.mean(random_estimation) * 100:.2f}%")
     return np.mean(random_estimation)
+
+
+def generate_x_hat(n):
+    start = np.random.randint(2, size=n)
+    start = np.array(np.where(start == 1, -1, 1))
+    return start
