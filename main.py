@@ -16,8 +16,8 @@ if __name__ == '__main__':
     random_avg = check_random_estimates(a, b, N, x_star, verbose=False)
 
     sim_num = 10
-    acceptances_over_runs = []
     estimation_overlap_over_runs = []
+    acceptance_rate_list = None
 
     print(f"=== a: {a}  b: {b}  N: {N} iterations per run: {it_num} ===")
 
@@ -29,11 +29,12 @@ if __name__ == '__main__':
         final_state, acceptance_rate_list, estimation_overlap = \
             baseline(start, adj_matrix, a, b, N, 1, x_star, it_num=it_num)
 
-        acceptances_over_runs.append(acceptance_rate_list)
         estimation_overlap_over_runs.append(estimation_overlap)
 
         print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round(estimation_overlap[-1] * 100, 2)}%')
 
+    # Plot convergences of our chains
     plot_estimation_overlaps_over_iterations(estimation_overlap_over_runs)
-    # plot_acceptance_rates(acceptances_over_runs)
-    # print(f"Average over all runs: {np.mean(average_over_runs)*100:.2f}% compared to random: {random_avg*100:.2f}%")
+
+    # Only plot the last chain's acceptance rates
+    plot_acceptance_rates(acceptance_rate_list)
