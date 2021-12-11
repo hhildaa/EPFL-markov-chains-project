@@ -53,13 +53,10 @@ def calculate_energy(x_hat, adj, a, b, n):
     return - energy
 
 
-
-
 def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
     state = start
     l = len(start)
     acceptance_rate_list = []
-    epsilon = 0.0001
     estimation_overlaps = []
     for i in range(it_num):
         # choose a random person
@@ -84,25 +81,27 @@ def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
         estimation_overlaps.append(assess_estimation_quality(state, x_star))
 
     # visualize_graph(adj, state)
-    return state, acceptance_rate_list, estimation_overlaps
+    return acceptance_rate_list, estimation_overlaps
 
 
-def houdayer(x_hat_1, x_hat_2, adj, a, b, n, beta, x_star, it_num=100):
+def houdayer(x_hat_1, x_hat_2, adj, a, b, n, beta, x_star, n_0=2, it_num=100):
     acceptance_rate_list = []
     epsilon = 0.0001
-    estimation_overlaps = []
+    estimation_overlaps_1 = []
+    estimation_overlaps_2 = []
+
     for i in range(it_num):
-        if i%2 == 0:
+        if i % n_0 == 0:
             x_hat_1, x_hat_2 = houdayer_step(x_hat_1, x_hat_2, adj)
         else:
             x_hat_1 = metropolis_step(x_hat_1, adj, a, b, n, beta)
             x_hat_2 = metropolis_step(x_hat_2, adj, a, b, n, beta)
 
         # Current overlap
-        # estimation_overlaps.append(assess_estimation_quality(state, x_star))
+        estimation_overlaps_1.append(assess_estimation_quality(x_hat_1, x_star))
+        estimation_overlaps_2.append(assess_estimation_quality(x_hat_2, x_star))
 
-    # visualize_graph(adj, state)
-    return x_hat_1, x_hat_2
+    return estimation_overlaps_1, estimation_overlaps_2
 
 
 def metropolis_step(state, adj, a, b, n, beta):
@@ -134,14 +133,16 @@ def houdayer_step(x_hat_1, x_hat_2, adj):
 
     l = np.arange(0, len(y_hat), 1)
     ind_select = l[y_hat == -1]
-    random = np.random.randint(len(ind_select))
-    chosen = ind_select[random]
+    print(len(ind_select))
+    if len(ind_select) > 0:
+        random = np.random.randint(len(ind_select))
+        chosen = ind_select[random]
 
-    G = nx.Graph(adj)
-    for n in G[chosen]:
-        if y_hat[n] == -1:
-            x_hat_1[n] = x_hat_1[n]*-1
-            x_hat_2[n] = x_hat_2[n]*-1
+        G = nx.Graph(adj)
+        for n in G[chosen]:
+            if y_hat[n] == -1:
+                x_hat_1[n] = x_hat_1[n]*-1
+                x_hat_2[n] = x_hat_2[n]*-1
 
     return x_hat_1, x_hat_2
 

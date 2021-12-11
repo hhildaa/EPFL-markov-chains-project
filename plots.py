@@ -38,6 +38,7 @@ def plot_estimation_overlaps_over_iterations(estimation_overlaps):
     for elem in estimation_overlaps:
         plt.plot(elem)
     plt.xlabel("Iterations")
+    plt.ylim(0, 1)
     plt.ylabel("Estimation overlap")
     plt.title("Estimation overlap over iterations")
     plt.show()
