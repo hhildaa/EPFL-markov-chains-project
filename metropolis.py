@@ -133,7 +133,6 @@ def houdayer_step(x_hat_1, x_hat_2, adj):
 
     l = np.arange(0, len(y_hat), 1)
     ind_select = l[y_hat == -1]
-    print(len(ind_select))
     if len(ind_select) > 0:
         random = np.random.randint(len(ind_select))
         chosen = ind_select[random]
