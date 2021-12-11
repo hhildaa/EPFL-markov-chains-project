@@ -12,29 +12,23 @@ def visualize_graph(adj, color, n):
 
 
 def aggregate_acceptance_rates(acceptances_list):
-    aggregates = np.array_split(np.array(acceptances_list), 30)
+    aggregates = np.array_split(np.array(acceptances_list), 20)
     total_iteration = [x.shape[0] for x in aggregates]
     aggregates = [np.sum(x) for x in aggregates]
     return aggregates, total_iteration
 
 
-def plot_acceptance_rates(acceptances_lists):
-    aggregates = []
-    total_iterations = []
-    for acc_list in acceptances_lists:
-        aggregate, total_its = aggregate_acceptance_rates(acc_list)
-        aggregates.append(aggregate)
-        total_iterations.append(total_its)
-    x = list(range(len(aggregates[0])))
-
-    for i in range(len(acceptances_lists)):
-        plt.figure()
-        plt.bar(x, total_iterations[i], width=0.5)
-        plt.bar(x, aggregates[i], width=0.5)
-        plt.xlabel("Iterations aggregated")
-        plt.ylabel("Proportion of accepted moves")
-        plt.legend(["total proposals", "accepted proposals"], loc='best')
-        plt.show()
+def plot_acceptance_rates(acceptances_list):
+    # Aggregate the ones and zeros over time
+    aggregate, total_its = aggregate_acceptance_rates(acceptances_list)
+    x = list(range(len(aggregate)))
+    plt.figure()
+    plt.bar(x, total_its, width=0.5)
+    plt.bar(x, aggregate, width=0.5)
+    plt.xlabel("Iterations aggregated")
+    plt.ylabel("Proportion of accepted moves")
+    plt.legend(["total proposals", "accepted proposals"], loc='best')
+    plt.show()
 
 
 def plot_estimation_overlaps_over_iterations(estimation_overlaps):
