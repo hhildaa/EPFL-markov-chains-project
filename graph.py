@@ -2,12 +2,14 @@ import numpy as np
 from numpy.random import default_rng
 
 
-def check_a_b_relation(a: int, b: int) -> None:
+def check_a_b_relation(a: int, b: int):
     if (a - b) ** 2 <= 2 * (a + b):
         print("We cannot detect the communitites in the limit." +
               " Chose a higher a or a lower b.")
+        return False
     else:
         print("You chose a and b wisely.")
+        return True
 
 
 def generate_x(n: int, seed: int) -> np.array:

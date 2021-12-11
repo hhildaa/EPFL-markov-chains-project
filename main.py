@@ -15,6 +15,9 @@ def test(a, b, N, it_num, beta, n_0, sim_num, algo):
     estimation_overlap_over_runs_1 = []
     estimation_overlap_over_runs_2 = []
 
+    estimation_overlaps_first_perfect_1 =[]
+    estimation_overlaps_first_perfect_2 =[]
+
     acceptance_rate_list = None
 
     print(f"=== a: {a}  b: {b}  N: {N} iterations per run: {it_num} ===")
@@ -31,7 +34,16 @@ def test(a, b, N, it_num, beta, n_0, sim_num, algo):
             estimation_overlap_over_runs_1.append(estimation_overlaps_1)
             estimation_overlap_over_runs_2.append(estimation_overlaps_2)
 
-            print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round(estimation_overlaps_1[-1] * 100, 2)}')
+            if estimation_overlaps_1.count(1)!=0:
+                estimation_overlaps_first_perfect_1.append(estimation_overlaps_1.index(1))
+                estimation_overlaps_first_perfect_2.append(estimation_overlaps_2.index(1))
+            else: 
+                estimation_overlaps_first_perfect_1.append('nan')
+                estimation_overlaps_first_perfect_2.append('nan')
+
+
+            print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round(estimation_overlaps_1[-1], 4)} \
+                first perfect: {estimation_overlaps_first_perfect_1[-1]}, {estimation_overlaps_first_perfect_2[-1]}')
 
     else: 
         for i in range(sim_num):
@@ -43,9 +55,17 @@ def test(a, b, N, it_num, beta, n_0, sim_num, algo):
 
             estimation_overlap_over_runs_1.append(estimation_overlaps_1)
 
-            print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round(estimation_overlaps_1[-1] * 100, 2)}')
+            if estimation_overlaps_1.count(1)!=0:
+                estimation_overlaps_first_perfect_1.append(estimation_overlaps_1.index(1))
+            else: 
+                estimation_overlaps_first_perfect_1.append('nan')
 
-    save_dict = {'a': a, 'b':b, 'N':N, 'it_num': it_num, 'beta': beta, 'n_0': n_0, 'sim_num': sim_num, 'algo': algo, 'estimation_overlap_over_runs_1': estimation_overlap_over_runs_1, 'estimation_overlap_over_runs_2': estimation_overlap_over_runs_2}
+            print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round(estimation_overlaps_1[-1], 4)}\
+                first perfect: {estimation_overlaps_first_perfect_1[-1]}')
+
+    save_dict = {'a': a, 'b':b, 'N':N, 'it_num': it_num, 'beta': beta, 'n_0': n_0, 'sim_num': sim_num, 'algo': algo, \
+        'estimation_overlap_over_runs_1': estimation_overlap_over_runs_1, 'estimation_overlap_over_runs_2': estimation_overlap_over_runs_2, \
+        'first_perfect_1': estimation_overlaps_first_perfect_1, 'first_perfect_2': estimation_overlaps_first_perfect_2}
 
     with open( DATA_PATH + f'a_{a}_b_{b}_algo_{algo}_beta_{beta}_n0_{n_0}'+'.pickle', 'wb' ) as handle:
         pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -53,17 +73,27 @@ def test(a, b, N, it_num, beta, n_0, sim_num, algo):
 
 
 if __name__ == '__main__':
-    a = 100
-    b = 20
-    N = a+b
-    it_num = 1000
+    sim_num = 100 
+
+    a_list = [80, 800 ]
+    b_list = [20, 200, ]
+    
+    it_nums = [1000]
+
     beta = 1
-    n_0 = 20
-    algo = 'metropolis'
-    sim_num = 1
+    n_0s = [1, 2, 10, 20]
 
-    check_a_b_relation(a, b)
+    algos = ['metropolis', 'houdayer']
 
-    test(a, b, N, it_num, beta, n_0, sim_num, algo)
+    for algo in algos: 
+        for i in range(len(a_list)):
+            a = a_list[i]
+            b = b_list[i]
+            N = a+b
+
+            if check_a_b_relation(a, b)==True:
+                for n_0 in n_0s:
+                    for it_num in it_nums:
+                        test(a, b, N, it_num, beta, n_0, sim_num, algo)
 
 
