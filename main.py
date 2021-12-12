@@ -20,7 +20,7 @@ def test(a, b, N, it_num, beta, n_0, sim_num, algo):
 
     acceptance_rate_list = None
 
-    print(f"=== a: {a}  b: {b}  N: {N} iterations per run: {it_num} ===")
+    print(f"=== a: {a}  b: {b}  N: {N} algo: {algo} iterations per run: {it_num} ===")
 
     if algo == 'houdayer': 
         for i in range(sim_num):
@@ -75,15 +75,15 @@ def test(a, b, N, it_num, beta, n_0, sim_num, algo):
 if __name__ == '__main__':
     sim_num = 100 
 
-    a_list = [80, 800 ]
-    b_list = [20, 200, ]
+    a_list = [80]
+    b_list = [20]
     
     it_nums = [1000]
 
     beta = 1
-    n_0s = [1, 2, 10, 20]
+    n_0s = [1, 2, 20]
 
-    algos = ['metropolis', 'houdayer']
+    algos = ['houdayer']
 
     for algo in algos: 
         for i in range(len(a_list)):
@@ -92,8 +92,12 @@ if __name__ == '__main__':
             N = a+b
 
             if check_a_b_relation(a, b)==True:
-                for n_0 in n_0s:
-                    for it_num in it_nums:
-                        test(a, b, N, it_num, beta, n_0, sim_num, algo)
+                if algo=='houdayer':
+                    for n_0 in n_0s:
+                        for it_num in it_nums:
+                            test(a, b, N, it_num, beta, n_0, sim_num, algo)
+                else: 
+                     for it_num in it_nums:
+                            test(a, b, N, it_num, beta, 1, sim_num, algo)
 
 
