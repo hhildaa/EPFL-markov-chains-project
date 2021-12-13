@@ -4,7 +4,7 @@ from numpy.random import default_rng
 
 def check_a_b_relation(a: int, b: int):
     if (a - b) ** 2 <= 2 * (a + b):
-        print("We cannot detect the communitites in the limit." +
+        print("We cannot detect the communities in the limit." +
               " Chose a higher a or a lower b.")
         return False
     else:

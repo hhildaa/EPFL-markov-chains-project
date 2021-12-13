@@ -5,7 +5,6 @@ import networkx as nx
 
 def visualize_graph(adj, color, n):
     # A: Fixed bug where you were using edges variable but should have been using adj
-
     G = nx.Graph(adj - np.eye(n))  # had edges variable here
     color_map = np.where(color == 1, 'blue', 'red')
     nx.draw(G, node_size=50, node_color=color_map)
