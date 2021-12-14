@@ -2,11 +2,9 @@ from graph import *
 from metropolis import *
 from plots import plot_acceptance_rates, visualize_graph, plot_estimation_overlaps_over_iterations
 import pickle
+from utils import DATAPATH, save_pickle
 
-DATA_PATH = './data/'
-
-
-def test(a, b, N, it_num, beta, n_0, sim_num, algo):
+def test(a, b, N, it_num, beta, n_0, sim_num, algo, save=True):
     x_star = generate_x(N, 5)
     adj_matrix = generate_adjacency_matrix(x_star, a, b, N)
     random_avg = check_random_estimates(a, b, N, x_star, verbose=False)
@@ -61,28 +59,27 @@ def test(a, b, N, it_num, beta, n_0, sim_num, algo):
             print(f'Iteration: {i + 1}/{sim_num} \t overlap: {round(estimation_overlaps_1[-1], 4)}\
                 first perfect: {estimation_overlaps_first_perfect_1[-1]}')
 
-    save_dict = {'a': a, 'b': b, 'N': N, 'it_num': it_num, 'beta': beta, 'n_0': n_0, 'sim_num': sim_num, 'algo': algo,
-                 'estimation_overlap_over_runs_1': estimation_overlap_over_runs_1,
-                 'estimation_overlap_over_runs_2': estimation_overlap_over_runs_2,
-                 'first_perfect_1': estimation_overlaps_first_perfect_1,
-                 'first_perfect_2': estimation_overlaps_first_perfect_2}
+    if save:
+        save_dict = {'a': a, 'b': b, 'N': N, 'it_num': it_num, 'beta': beta, 'n_0': n_0, 'sim_num': sim_num, 'algo': algo,
+                     'estimation_overlap_over_runs_1': estimation_overlap_over_runs_1,
+                     'estimation_overlap_over_runs_2': estimation_overlap_over_runs_2,
+                     'first_perfect_1': estimation_overlaps_first_perfect_1,
+                     'first_perfect_2': estimation_overlaps_first_perfect_2}
 
-    with open(DATA_PATH + f'a_{a}_b_{b}_algo_{algo}_beta_{beta}_n0_{n_0}' + '.pickle', 'wb') as handle:
-        pickle.dump(save_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        save_pickle(save_dict, DATAPATH, f'a_{a}_b_{b}_algo_{algo}_beta_{beta}_n0_{n_0}' + '.pickle')
 
 
 if __name__ == '__main__':
-    sim_num = 100
+    sim_num = 2
 
-    a_list = [80]
-    b_list = [20]
-
+    a_list = [56]
+    b_list = [41]
     it_nums = [1000]
+    betas = [.01, .1, 1, 2, 5]
+    n_0s = []
+    save = True
 
-    beta = 1
-    n_0s = [1, 2, 20]
-
-    algos = ['houdayer']
+    algos = ['metropolis']
 
     for algo in algos:
         for i in range(len(a_list)):
@@ -94,7 +91,8 @@ if __name__ == '__main__':
                 if algo == 'houdayer':
                     for n_0 in n_0s:
                         for it_num in it_nums:
-                            test(a, b, N, it_num, beta, n_0, sim_num, algo)
+                            test(a, b, N, it_num, beta, n_0, sim_num, algo, save)
                 else:
-                    for it_num in it_nums:
-                        test(a, b, N, it_num, beta, 1, sim_num, algo)
+                    for beta in betas:
+                        for it_num in it_nums:
+                            test(a, b, N, it_num, beta, 1, sim_num, algo, save)
