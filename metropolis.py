@@ -3,6 +3,7 @@ import networkx as nx
 
 # Baseline algorithm - simple random walk
 from graph import assess_estimation_quality
+import time
 
 
 def change_one_elem(state, ind):
@@ -64,6 +65,14 @@ def calculate_energy_change(state, chosen_person, adj, a, b, n):
     return 2 * state[chosen_person] * local_energy
 
 
+def calculate_energy_change_lightning(state, chosen_person, adj, a, b, n):
+    edges = adj[chosen_person]
+    edges_inv = np.abs(edges - 1)
+    local_energy = (1/2)*(edges * np.log(a / b) + edges_inv * np.log((1-a/n)/(1-b/n))) * state
+    local_energy[chosen_person] = 0
+    return 2 * state[chosen_person] * sum(local_energy)
+
+
 def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
     state = start
     l = len(start)
@@ -73,7 +82,7 @@ def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
         # choose a random person
         chosen_person = np.random.randint(l)
 
-        change_energy = calculate_energy_change(state, chosen_person, adj, a, b, n)
+        change_energy = calculate_energy_change_lightning(state, chosen_person, adj, a, b, n)
         accept_rate = np.exp(-beta * change_energy)
 
         random = np.random.rand(1)

@@ -3,6 +3,7 @@ from metropolis import *
 from plots import plot_acceptance_rates, visualize_graph, plot_estimation_overlaps_over_iterations
 import pickle
 from utils import DATAPATH, save_pickle
+import time
 
 def test(a, b, N, it_num, beta, n_0, sim_num, algo, save=True):
     x_star = generate_x(N, 5)
@@ -95,4 +96,6 @@ if __name__ == '__main__':
                 else:
                     for beta in betas:
                         for it_num in it_nums:
+                            s = time.time()
                             test(a, b, N, it_num, beta, 1, sim_num, algo, save)
+                            print(f"Run Time: {round(time.time() - s, 5)}")
