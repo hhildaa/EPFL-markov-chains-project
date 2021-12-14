@@ -53,6 +53,17 @@ def calculate_energy(x_hat, adj, a, b, n):
     return - energy
 
 
+def calculate_energy_change(state, chosen_person, adj, a, b, n):
+    local_energy = 0
+    edges = adj[chosen_person]
+    for i in range(len(state)):
+        if i != chosen_person:
+            e = edges[i]
+            h = calculate_h(a, b, n, e)
+            local_energy += h * state[i]
+    return 2 * state[chosen_person] * local_energy
+
+
 def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
     state = start
     l = len(start)
@@ -62,16 +73,13 @@ def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
         # choose a random person
         chosen_person = np.random.randint(l)
 
-        # get the new state by changing the color of the random person
-        new_state = change_one_elem(state, chosen_person)
-
-        # calculate the acceptance and go to the next iteration
-        change_energy = calculate_energy(new_state, adj, a, b, n) - calculate_energy(state, adj, a, b, n)
+        change_energy = calculate_energy_change(state, chosen_person, adj, a, b, n)
         accept_rate = np.exp(-beta * change_energy)
 
         random = np.random.rand(1)
 
         if random <= accept_rate:
+            new_state = change_one_elem(state, chosen_person)
             state = new_state
             acceptance_rate_list.append(1)
         else:
