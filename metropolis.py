@@ -105,7 +105,7 @@ def metropolis_step(state, adj, a, b, n, beta):
     new_state = change_one_elem(state, chosen_person)
 
     # calculate the acceptance and go to the next iteration
-    change_energy = calculate_energy(new_state, adj, a, b, n) - calculate_energy(state, adj, a, b, n)
+    change_energy = calculate_energy_change_lightning(state, chosen_person, adj, a, b, n)
     accept_rate = np.exp(-beta * change_energy)
 
     random = np.random.rand(1)
