@@ -81,7 +81,6 @@ if __name__ == '__main__':
     beta_ns = [2, 1]
     n_0s = []
     save = True
-    annealing=True
 
     algos = ['metropolis']
 
