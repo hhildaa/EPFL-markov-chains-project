@@ -15,6 +15,9 @@ def theoretical_phase_transition(a, b):
 def plot_phase_transition_metropolis(x, ys, ns, r_crits, algorithm):
     colors = ["blue", "orange", "green"]
     plt.figure()
+    x = np.insert(x, 0, 0)
+    ys = np.array(ys)
+    ys = np.insert(ys, 0, 1, axis=1)
     for idx in range(len(ns)):
         plt.plot(x, ys[idx], label=str(ns[idx]), c=colors[idx % len(ns)])
         plt.vlines(r_crits[idx], ymin=0, ymax=1,
@@ -64,6 +67,7 @@ if __name__ == '__main__':
     r_critical = [r_crit_100, r_crit_500, r_crit_1000]
     n_s = [100, 500, 1000]
 
-    houdayer_viz(r_critical, n_s)
     metropolis_phase_viz(r_critical, n_s)
+
+    houdayer_viz(r_critical, n_s)
 

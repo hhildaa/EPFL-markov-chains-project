@@ -1,9 +1,6 @@
 import numpy as np
-import networkx as nx
 
-# Baseline algorithm - simple random walk
 from graph import assess_estimation_quality
-import time
 
 
 def change_one_elem(state, ind):
@@ -11,28 +8,6 @@ def change_one_elem(state, ind):
     changed = state.copy()
     changed[ind] = changed[ind] * (-1)
     return changed
-
-
-def f_dummy(adj: np.array, state: np.array, ind: int):
-    """
-    this function counts the red and blue neighbours of the chosen person, and
-    if the person has more of the person's colored neighbours, then it will
-    suggest not to change color, otherwise yes
-    """
-    chosen = state[ind]
-
-    # count the blue and the red neighbours
-    neigh = adj[ind, :]
-
-    # + ones
-    red_num = neigh[state > 0].sum()
-    # - ones
-    blue_num = neigh[state < 0].sum()
-
-    if chosen == 1:
-        return (red_num) / (red_num + blue_num)
-    else:
-        return (blue_num) / (red_num + blue_num)
 
 
 def calculate_h(a, b, n, e):
@@ -79,7 +54,6 @@ def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
     acceptance_rate_list = []
     estimation_overlaps = []
     for i in range(it_num):
-        # choose a random person
         chosen_person = np.random.randint(l)
 
         change_energy = calculate_energy_change_lightning(state, chosen_person, adj, a, b, n)
@@ -97,13 +71,14 @@ def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
         # Current overlap
         estimation_overlaps.append(assess_estimation_quality(state, x_star))
 
-    # visualize_graph(adj, state)
     return acceptance_rate_list, estimation_overlaps
 
 
 def houdayer(x_hat_1, x_hat_2, adj, a, b, n, beta, x_star, n_0=2, it_num=100):
+    """
+    If n_0 == 2, then we have the original houdayer algorithm, for n_0 > 2, it's mixed houdayer.
+    """
     acceptance_rate_list = []
-    epsilon = 0.0001
     estimation_overlaps_1 = []
     estimation_overlaps_2 = []
 
@@ -145,7 +120,7 @@ def metropolis_step(state, adj, a, b, n, beta):
     return state
 
 
-def houdayer_step(x_hat_1, x_hat_2, adj):
+def houdayer_step(x_hat_1: np.array, x_hat_2: np.array, adj: np.array) -> np.array:
     y_hat = x_hat_1 * x_hat_2
 
     l = np.arange(0, len(y_hat), 1)
@@ -154,13 +129,11 @@ def houdayer_step(x_hat_1, x_hat_2, adj):
         random = np.random.randint(len(ind_select))
         chosen = ind_select[random]
 
-        G = nx.Graph(adj)
-        for n in G[chosen]:
-            if y_hat[n] == -1:
-                x_hat_1[n] = x_hat_1[n]*-1
-                x_hat_2[n] = x_hat_2[n]*-1
+        neighbours = np.arange(0, adj.shape[0])[adj[chosen] == 1]
+        mask = np.ones_like(x_hat_1)
+        negative_neighs = neighbours[y_hat[neighbours] == -1]
+        mask[negative_neighs] = mask[negative_neighs] * -1
+        x_hat_1 = x_hat_1 * mask
+        x_hat_2 = x_hat_2 * mask
 
     return x_hat_1, x_hat_2
-
-
-

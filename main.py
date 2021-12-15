@@ -5,6 +5,7 @@ import pickle
 from utils import DATAPATH, save_pickle
 import time
 
+
 def test(a, b, N, it_num, beta, n_0, sim_num, algo, save=True):
     x_star = generate_x(N, 5)
     adj_matrix = generate_adjacency_matrix(x_star, a, b, N)
