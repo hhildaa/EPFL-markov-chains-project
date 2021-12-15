@@ -107,3 +107,10 @@ def generate_x_hat(n):
     start = np.random.randint(2, size=n)
     start = np.array(np.where(start == 1, -1, 1))
     return start
+
+
+def critical_a_b(n):
+    a = n**2 + n
+    b = n**2 - n
+    N = a + b
+    return a, b, N

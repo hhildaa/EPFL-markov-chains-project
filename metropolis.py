@@ -73,15 +73,26 @@ def calculate_energy_change_lightning(state, chosen_person, adj, a, b, n):
     return 2 * state[chosen_person] * sum(local_energy)
 
 
-def metropolis(start, adj, a, b, n, beta, x_star, it_num=100):
+def calculate_beta(f, l, t, T):
+    t_f = 1/f
+    t_l = 1/l
+    t0 = t_f*t_l*(np.log(T+1) - np.log(2))
+    t1 = (t_l*np.log(T+1)-t_f*np.log(2))+(t_f-t_l)*np.log(t+1)
+    beta = t0/t1
+    return 1/beta
+
+
+def metropolis(start, adj, a, b, n, beta_0, x_star, beta_n=None, it_num=100):
     state = start
     l = len(start)
     acceptance_rate_list = []
     estimation_overlaps = []
+    beta = beta_0
     for i in range(it_num):
         # choose a random person
         chosen_person = np.random.randint(l)
-
+        if beta_n:
+            beta = calculate_beta(beta_0, beta_n, i+1, it_num)
         change_energy = calculate_energy_change_lightning(state, chosen_person, adj, a, b, n)
         accept_rate = np.exp(-beta * change_energy)
 
