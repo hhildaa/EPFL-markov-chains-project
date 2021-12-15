@@ -1,32 +1,3 @@
-"""
-For the simulations, you are free to fix parameters as you wish and explore. However, here are a
-few guidelines and reasonable values: d = 3, N ranges between 100 and 1000, make about 100
-experiments to compute the empirical average of the overlap.
-Explore and compare the above algorithms and in particular:
-• Investigate the average overlap as a function of time. Compare the convergence time of the
-various algorithms (a meaningful measure of time is given by the number of steps of each
-algorithm).
-
-• Plot the average (over experiments) of limt→+∞ qN (t) as a function of b
-a ∈ (0, 1]. Compare the limiting performance of different algorithms.
-
-• Try to pinpoint the phase transition. Ideal phase transitions occur for N → +∞, so you will
-necessarily find a smooth curve for finite N . By looking at the evolution of curves for many
-N values, you may be able to get a rough indication of the phase transition point
-"""
-
-# TODO:
-# For each ratio a/b, simulate per algorithm to what value of qn it converges, plot this as a fct of a/b;
-# N is between 100 and 1000
-
-# Chose:
-# N = 100, 500, 1000
-# Algo: Houdayer, Metropolis, Mixed Houdayer
-# b/a in [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-#        [10/990, 100/900, 200/800, 300/700, 40/600, 500/500]
-
-import pickle
-
 import numpy as np
 
 from graph import generate_x_hat, generate_x, generate_adjacency_matrix
@@ -55,7 +26,7 @@ if __name__ == '__main__':
             a_list = np.array([70, 60, 57, 55, 54, 53, 52, 51, 50]) * 10
             b_list = np.array([30, 40, 43, 45, 46, 47, 48, 49, 50]) * 10
 
-        it_nums = [500, 500, 500, 500, 500, 500, 500, 500, 500]
+        it_nums = [500, 500, 500, 800, 800, 800, 500, 500, 500]
 
         assert len(a_list) == len(b_list) == len(it_nums)
         assert [a_list[i]+b_list[i] for i in range(len(a_list))] == [N]*len(a_list)
