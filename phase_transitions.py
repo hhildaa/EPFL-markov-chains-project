@@ -10,26 +10,20 @@ DATA_PATH = './data/'
 if __name__ == '__main__':
     a_list = None
     b_list = None
-    n_0 = None
-    algorithm = 'houdayer'
+    algorithm = 'metropolis'
     rounds = 10
+    n_0 = 2
 
-    for N in [100, 500, 1000]:
+    for N in [100, 500, 1000]:  # 100, 500, 1000
 
-        if N == 100:
-            a_list = np.array([70, 60, 57, 55, 54, 53, 52, 51, 50])
-            b_list = np.array([30, 40, 43, 45, 46, 47, 48, 49, 50])
-        elif N == 500:
-            a_list = np.array([70, 60, 57, 55, 54, 53, 52, 51, 50]) * 5
-            b_list = np.array([30, 40, 43, 45, 46, 47, 48, 49, 50]) * 5
-        elif N == 1000:
-            a_list = np.array([70, 60, 57, 55, 54, 53, 52, 51, 50]) * 10
-            b_list = np.array([30, 40, 43, 45, 46, 47, 48, 49, 50]) * 10
+        a_list = np.array([9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5.2, 5]) * 10
+        b_list = np.array([0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 4.8, 5]) * 10
+        node_degree = int((b_list[0] + a_list[0])/2)
 
-        it_nums = [500, 500, 500, 800, 800, 800, 500, 500, 500]
-
+        it_nums = np.array([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10], dtype=int) * 1000
+        it_nums = it_nums.tolist()
         assert len(a_list) == len(b_list) == len(it_nums)
-        assert [a_list[i]+b_list[i] for i in range(len(a_list))] == [N]*len(a_list)
+        # assert [a_list[i]+b_list[i] for i in range(len(a_list))] == [N]*len(a_list)
 
         beta = 1
         avg_estimation_overlaps = []
@@ -53,12 +47,10 @@ if __name__ == '__main__':
             for experiment_run in range(rounds):
                 x_hat_1 = generate_x_hat(N)
                 if algorithm == "metropolis":
-                    n_0 = 0
                     _, estimation_overlaps = \
                         metropolis(x_hat_1, adj_matrix, a, b, N, beta, x_star, it_num=it_num)
 
                 elif algorithm == "houdayer":
-                    n_0 = 2  # Normal houdayer
                     x_hat_2 = generate_x_hat(N)
                     estimation_overlaps, estimation_overlaps_2 = \
                         houdayer(x_hat_1, x_hat_2, adj_matrix, a, b, N, beta, x_star, n_0=n_0, it_num=it_num)
@@ -66,18 +58,25 @@ if __name__ == '__main__':
 
                 estimation_overlap_over_runs.append(estimation_overlaps[-1])
 
-                print(f'Iteration: {experiment_run + 1}/ {rounds} \t overlap: {round(estimation_overlaps[-1], 4)}')
+                print(f'{algorithm} iteration: {experiment_run + 1}/ {rounds} \t overlap: {round(estimation_overlaps[-1], 4)}')
 
             print(round(sum(estimation_overlap_over_runs) / len(estimation_overlap_over_runs), 4))
             if algorithm == "metropolis":
-                avg_estimation_overlaps.append(round(sum(estimation_overlap_over_runs)
-                                                     / len(estimation_overlap_over_runs), 4))
+                avg_estimation_overlaps.append(estimation_overlap_over_runs)
             elif algorithm == "houdayer":
-                chain_1 = sum(estimation_overlap_over_runs) / len(estimation_overlap_over_runs)
-                chain_2 = sum(estimation_overlap_over_runs_2) / len(estimation_overlap_over_runs_2)
-                avg_estimation_overlaps.append(round(np.mean([chain_1, chain_2]), 4))
+                chain_1 = np.array(estimation_overlap_over_runs)
+                chain_2 = np.array(estimation_overlap_over_runs_2)
+                # TODO check this
+                avg_estimation_overlaps.append(np.mean([chain_1, chain_2]))
 
         b_div_a = np.array(b_list) / np.array(a_list)
-        save_dict = {'b_div_a': b_div_a, 'N': N, 'algo': algorithm, 'avg_estimation_overlap': avg_estimation_overlaps}
+        save_dict = {'b_div_a': b_div_a,
+                     'N': N,
+                     'algo': algorithm,
+                     'avg_estimation_overlap': avg_estimation_overlaps,
+                     'degree': node_degree}
 
-        save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_n0_{n_0}' + '.pickle')
+        if algorithm == "houdayer":
+            save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_n0_{n_0}_degree_{node_degree}' + '.pickle')
+        elif algorithm == "metropolis":
+            save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_degree_{node_degree}' + '.pickle')
