@@ -1,6 +1,8 @@
 import numpy as np
-
+import networkx as nx
+# from networkit import *
 from graph import assess_estimation_quality
+import time
 
 
 def change_one_elem(state, ind):
@@ -81,7 +83,6 @@ def metropolis(start, adj, a, b, n, beta_0, x_star, beta_n=None, it_num=100):
 
         # Current overlap
         estimation_overlaps.append(assess_estimation_quality(state, x_star))
-
     return acceptance_rate_list, estimation_overlaps
 
 
@@ -92,18 +93,22 @@ def houdayer(x_hat_1, x_hat_2, adj, a, b, n, beta, x_star, n_0=2, it_num=100):
     acceptance_rate_list = []
     estimation_overlaps_1 = []
     estimation_overlaps_2 = []
-
+    s = time.time()
     for i in range(it_num):
         if i % n_0 == 0:
+            # s = time.time()
             x_hat_1, x_hat_2 = houdayer_step(x_hat_1, x_hat_2, adj)
+            # print(f"Houdayer Step: {round(time.time() - s, 5)}")
         else:
+            # s = time.time()
             x_hat_1 = metropolis_step(x_hat_1, adj, a, b, n, beta)
             x_hat_2 = metropolis_step(x_hat_2, adj, a, b, n, beta)
+            # print(f"Met Step: {round(time.time() - s, 5)}")
 
         # Current overlap
         estimation_overlaps_1.append(assess_estimation_quality(x_hat_1, x_star))
         estimation_overlaps_2.append(assess_estimation_quality(x_hat_2, x_star))
-
+    print(f"Iter Time Step: {round(time.time() - s, 5)}")
     return estimation_overlaps_1, estimation_overlaps_2
 
 
@@ -123,10 +128,8 @@ def metropolis_step(state, adj, a, b, n, beta):
 
     if random <= accept_rate:
         state = new_state
-        # acceptance_rate_list.append(1)
     else:
         pass
-        # acceptance_rate_list.append(0)
 
     return state
 
@@ -136,15 +139,25 @@ def houdayer_step(x_hat_1: np.array, x_hat_2: np.array, adj: np.array) -> np.arr
 
     l = np.arange(0, len(y_hat), 1)
     ind_select = l[y_hat == -1]
+    unlink = l[y_hat == 1]
     if len(ind_select) > 0:
         random = np.random.randint(len(ind_select))
         chosen = ind_select[random]
 
-        neighbours = np.arange(0, adj.shape[0])[adj[chosen] == 1]
-        mask = np.ones_like(x_hat_1)
-        negative_neighs = neighbours[y_hat[neighbours] == -1]
-        mask[negative_neighs] = mask[negative_neighs] * -1
-        x_hat_1 = x_hat_1 * mask
-        x_hat_2 = x_hat_2 * mask
+        mask = np.ones(adj.shape)
+        mask[:, unlink] = 0
+        mask[unlink, :] = 0
+
+        # s = time.time()
+        G = nx.Graph(adj*mask)
+        flip = nx.descendants(G, chosen)
+        # print(f"Graph Step: {round(time.time() - s, 5)}")
+
+        flip.add(chosen)
+        mask2 = np.ones(x_hat_1.shape)
+        mask2[list(flip)] = -1
+
+        x_hat_1 = x_hat_1 * mask2
+        x_hat_2 = x_hat_2 * mask2
 
     return x_hat_1, x_hat_2

@@ -33,7 +33,7 @@ def test(a, b, N, it_num, beta_0, n_0, sim_num, algo, beta_n=None, save=True):
             estimation_overlap_over_runs_1.append(estimation_overlaps_1)
             estimation_overlap_over_runs_2.append(estimation_overlaps_2)
 
-            if estimation_overlaps_1.count(1) != 0:
+            if estimation_overlaps_1.count(1) != 0 and estimation_overlaps_2.count(1) != 0:
                 estimation_overlaps_first_perfect_1.append(estimation_overlaps_1.index(1))
                 estimation_overlaps_first_perfect_2.append(estimation_overlaps_2.index(1))
             else:
@@ -74,28 +74,30 @@ def test(a, b, N, it_num, beta_0, n_0, sim_num, algo, beta_n=None, save=True):
 if __name__ == '__main__':
     sim_num = 100
 
-    a_list = [650]
-    b_list = [575]
-    it_nums = [10000]
-    beta_0s = [.1, .5]
-    beta_ns = [2, 1]
-    n_0s = []
+    a_list = [20]
+    b_list = [5]
+    N_list = [500]
+    it_nums = [1000]
+    beta_0s = [1]
+    beta_ns = [None]
+    n_0s = [2]
     save = True
-
-    algos = ['metropolis']
+    algos = ['houdayer']
 
     for algo in algos:
         for i in range(len(a_list)):
             a = a_list[i]
             b = b_list[i]
-            N = a + b
+            N = N_list[i]
+            beta_0 = beta_0s[i]
+            beta_n = beta_ns[i]
 
             if check_a_b_relation(a, b):
                 if algo == 'houdayer':
                     for n_0 in n_0s:
                         for it_num in it_nums:
                             s = time.time()
-                            test(a, b, N, it_num, beta_0, beta_n, n_0, sim_num, algo, save=save)
+                            test(a, b, N, it_num, beta_0, n_0, sim_num, algo, beta_n=beta_n, save=save)
                             print(f"Run Time: {round(time.time() - s, 5)}")
                 else:
                     for i in range(len(beta_0s)):
