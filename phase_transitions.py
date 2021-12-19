@@ -30,7 +30,7 @@ if __name__ == '__main__':
         r_crit = theoretical_phase_transition(a_list[0], b_list[0])
         print(f'Critical phase transition expected at r_crit = {round(r_crit, 4)}.')
 
-        for idx in range(0, 1):  # len(a_list)):
+        for idx in range(0, len(a_list)):  # len(a_list)):
             a = a_list[idx]
             b = b_list[idx]
             it_num = it_nums[idx]
@@ -77,5 +77,5 @@ if __name__ == '__main__':
         if algorithm == "houdayer":
             save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_n0_{n_0}_degree_{node_degree}' + '.pickle')
         elif algorithm == "metropolis":
-            save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_degree_{node_degree}' + '.pickle')
+            save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_degree_{node_degree}_FINAL' + '.pickle')
             # save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_degree_{node_degree}_TEST' + '.pickle')
