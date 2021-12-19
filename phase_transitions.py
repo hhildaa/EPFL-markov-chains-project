@@ -10,17 +10,17 @@ DATA_PATH = './data/'
 if __name__ == '__main__':
     a_list = None
     b_list = None
-    algorithm = 'metropolis'
+    algorithm = 'houdayer'
     rounds = 10
-    n_0 = 10
+    n_0 = 9
 
-    for N in [500]:  # 100, 500, 1000
+    for N in [200]:  # 100, 500, 1000
 
         a_list = np.array([9.5, 8.5, 8, 7.5, 7, 5])
         b_list = np.array([0.5, 1.5, 2, 2.5, 3, 5])
         node_degree = int((b_list[0] + a_list[0])/2)
 
-        it_nums = np.array([670000, 670000, 670000, 670000, 670000, 10], dtype=int)
+        it_nums = np.array([90000, 90000, 90000, 90000, 90000, 10], dtype=int)
         it_nums = it_nums.tolist()
         assert len(a_list) == len(b_list) == len(it_nums)
 
