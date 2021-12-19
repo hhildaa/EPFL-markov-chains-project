@@ -12,18 +12,17 @@ if __name__ == '__main__':
     b_list = None
     algorithm = 'metropolis'
     rounds = 10
-    n_0 = 2
+    n_0 = 10
 
-    for N in [100, 500, 1000]:  # 100, 500, 1000
+    for N in [500]:  # 100, 500, 1000
 
-        a_list = np.array([9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5.2, 5]) * 10
-        b_list = np.array([0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 4.8, 5]) * 10
+        a_list = np.array([9.5, 8.5, 8, 7.5, 7, 5])
+        b_list = np.array([0.5, 1.5, 2, 2.5, 3, 5])
         node_degree = int((b_list[0] + a_list[0])/2)
 
-        it_nums = np.array([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10], dtype=int) * 1000
+        it_nums = np.array([670000, 670000, 670000, 670000, 670000, 10], dtype=int)
         it_nums = it_nums.tolist()
         assert len(a_list) == len(b_list) == len(it_nums)
-        # assert [a_list[i]+b_list[i] for i in range(len(a_list))] == [N]*len(a_list)
 
         beta = 1
         avg_estimation_overlaps = []
@@ -31,7 +30,7 @@ if __name__ == '__main__':
         r_crit = theoretical_phase_transition(a_list[0], b_list[0])
         print(f'Critical phase transition expected at r_crit = {round(r_crit, 4)}.')
 
-        for idx in range(0, len(a_list)):
+        for idx in range(0, 1):  # len(a_list)):
             a = a_list[idx]
             b = b_list[idx]
             it_num = it_nums[idx]
@@ -49,14 +48,14 @@ if __name__ == '__main__':
                 if algorithm == "metropolis":
                     _, estimation_overlaps = \
                         metropolis(x_hat_1, adj_matrix, a, b, N, beta, x_star, it_num=it_num)
+                    estimation_overlap_over_runs.append(estimation_overlaps[-1])
 
                 elif algorithm == "houdayer":
                     x_hat_2 = generate_x_hat(N)
                     estimation_overlaps, estimation_overlaps_2 = \
                         houdayer(x_hat_1, x_hat_2, adj_matrix, a, b, N, beta, x_star, n_0=n_0, it_num=it_num)
+                    estimation_overlap_over_runs.append(estimation_overlaps[-1])
                     estimation_overlap_over_runs_2.append(estimation_overlaps_2[-1])
-
-                estimation_overlap_over_runs.append(estimation_overlaps[-1])
 
                 print(f'{algorithm} iteration: {experiment_run + 1}/ {rounds} \t overlap: {round(estimation_overlaps[-1], 4)}')
 
@@ -66,8 +65,7 @@ if __name__ == '__main__':
             elif algorithm == "houdayer":
                 chain_1 = np.array(estimation_overlap_over_runs)
                 chain_2 = np.array(estimation_overlap_over_runs_2)
-                # TODO check this
-                avg_estimation_overlaps.append(np.mean([chain_1, chain_2]))
+                avg_estimation_overlaps.append(np.mean([chain_1, chain_2], axis=0))
 
         b_div_a = np.array(b_list) / np.array(a_list)
         save_dict = {'b_div_a': b_div_a,
@@ -80,3 +78,4 @@ if __name__ == '__main__':
             save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_n0_{n_0}_degree_{node_degree}' + '.pickle')
         elif algorithm == "metropolis":
             save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_degree_{node_degree}' + '.pickle')
+            # save_pickle(save_dict, DATAPATH, f'algo_{algorithm}_N_{N}_degree_{node_degree}_TEST' + '.pickle')
