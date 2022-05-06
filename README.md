@@ -1,1 +1,1 @@
-# markov_chains_project
+# EPFL Markov Chains Project
